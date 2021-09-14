@@ -1,0 +1,4 @@
+node_modules
+.apiConfig.json
+public/build/**
+public/assets/**
