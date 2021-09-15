@@ -4,7 +4,7 @@ import Lights from '../src/misc/Lights'
 
 const { Computer, ComputerConnection, Keyboard, MouseControls,  TouchControls, KeyboardControls, XRControls } = window.DV;
 
-let code, token, computers = [];
+let code, token, computers = [], computerId;
 let computerConnection, desktop, mouseControls, touchControls, keyboardControls, xrControls, keyboard;
 
 const sceneContainer = document.getElementById("scene-container");
@@ -12,6 +12,7 @@ const computersContainer = document.getElementById('computers-wrapper')
 const authCodeButton = document.getElementById("dv-auth-code")
 const authTokenButton = document.getElementById("dv-auth-token")
 const fetchComputersButton = document.getElementById("dv-fetch-computers")
+const connectSingleComputerButton = document.getElementById("dv-connect-computer")
 const enterSceneButton = document.getElementById("enter-scene-button")
 const createComputerButton = document.getElementById("computer-test-button")
 
@@ -46,7 +47,7 @@ const xrControlsOptions = {
 
 
 loadScene()
-checkForCode()
+checkUrlParams()
 updateButtonState()
 addButtonEventListeners()
 addWindowResizeEventListener()
@@ -88,12 +89,14 @@ function addButtonEventListeners() {
 	authTokenButton.onclick = connectToDV
 	fetchComputersButton.onclick = fetchComputers
 	createComputerButton.onclick = createTestComputer
+	connectSingleComputerButton.onclick = connectToSingleComputer
 }
 
 function updateButtonState() {
 	authCodeButton.disabled = code
 	fetchComputersButton.disabled = !token
 	authTokenButton.disabled = !code
+	connectSingleComputerButton.disabled = !token || !computerId
 }
 
 async function enterVR() {
@@ -113,8 +116,9 @@ function getDvCode() {
 	const redirectURL = new URL(window.location.href);
 	redirectURL.searchParams.set("oauth", "desktopvision");
 	const redirectUri = encodeURIComponent(redirectURL);
+	const selectComputer = true
 
-	window.location.href = `https://desktop.vision/login/?response_type=code&client_id=${clientID}&scope=${scope}&redirect_uri=${redirectUri}`;
+	window.location.href = `https://desktop.vision/login/?response_type=code&client_id=${clientID}&scope=${scope}&redirect_uri=${redirectUri}&selectComputer=${selectComputer}`;
 }
 
 async function connectToDV() {
@@ -125,8 +129,14 @@ async function connectToDV() {
 	} catch (e) {
 		console.log(e.message)
 	}
-	clearCode();
+	clearUrlParams();
 	updateButtonState()
+}
+
+async function connectToSingleComputer() {
+	await fetchComputers()
+	const selectedC = computers.find(c => c.id === computerId)
+	connectToComputer(selectedC)
 }
 
 async function fetchComputers() {
@@ -153,16 +163,18 @@ function createComputerButtons(computers) {
 	}
 }
 
-function checkForCode() {
+function checkUrlParams() {
 	const urlParams = new URLSearchParams(window.location.search);
 	code = urlParams.get("code");
+	computerId = urlParams.get("computer_id");
 }
 
-function clearCode() {
+function clearUrlParams() {
 	const url = new URL(location.href);
 	url.searchParams.delete("oauth");
 	url.searchParams.delete("code");
 	window.history.replaceState({}, "", url);
+	url.searchParams.delete("computer_id");
 	code = null;
 }
 
@@ -217,7 +229,6 @@ function createComputer() {
 }
 
 function createTestComputer(){
-	console.log('create test pc')
 	const video = document.getElementById("video-stream");
 	video.src = '/welcome.mp4';
 	video.muted = true
