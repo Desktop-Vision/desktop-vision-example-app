@@ -1,8 +1,12 @@
-import * as THREE from 'three';
 import Cubes from '../src/misc/Cubes'
 import Lights from '../src/misc/Lights'
 
-const { Computer, ComputerConnection, Keyboard, MouseControls,  TouchControls, KeyboardControls, XRControls } = window.DV;
+import * as THREE from 'three';
+window.THREE = THREE
+
+const DV = window.DV
+const { DVThree } = DV
+const { Computer, ComputerConnection, Keyboard, MouseControls,  TouchControls, KeyboardControls, XRControls } = DVThree;
 
 let code, token, computers = [], computerId;
 let computerConnection, desktop, mouseControls, touchControls, keyboardControls, xrControls, keyboard;
@@ -27,7 +31,7 @@ const lights = new Lights(scene)
 const keyboardOptions = {
 	initialPosition: { x: 0, y: -0.25, z: 0 },
 	initialScalar: 0.125,
-	hideMoveIcon: true,
+	hideMoveIcon: false,
 	hideResizeIcon: false,
 }
 
@@ -173,8 +177,8 @@ function clearUrlParams() {
 	const url = new URL(location.href);
 	url.searchParams.delete("oauth");
 	url.searchParams.delete("code");
-	window.history.replaceState({}, "", url);
 	url.searchParams.delete("computer_id");
+	window.history.replaceState({}, "", url);
 	code = null;
 }
 
@@ -230,7 +234,7 @@ function createComputer() {
 
 function createTestComputer(){
 	const video = document.getElementById("video-stream");
-	video.src = '/welcome.mp4';
+	video.src = '/dvVid.mp4';
 	video.muted = true
 	video.play();
 
