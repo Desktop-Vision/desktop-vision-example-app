@@ -128,8 +128,20 @@ function getDvCode() {
 	redirectURL.searchParams.set("oauth", "desktopvision");
 	const redirectUri = encodeURIComponent(redirectURL);
 	const selectComputer = true
-
-	window.location.href = `https://desktop.vision/login/?response_type=code&client_id=${clientID}&scope=${scope}&redirect_uri=${redirectUri}&selectComputer=${selectComputer}`;
+	const method = 'popup' // change this to something else for same window auth
+	if (method === 'popup') {
+		const newWindow = window.open(`https://desktop.vision/login/?response_type=code&client_id=${clientID}&scope=${scope}&redirect_uri=${redirectUri}&redirect_type=popup&selectComputer=true`);
+		window.onmessage = function (e) {
+			code = e.data.code
+			computerId = e.data.computerId
+			if (code && computerId) {
+				newWindow.close()
+				updateButtonState()
+			}
+		};
+	} else {
+		window.location.href = `https://desktop.vision/login/?response_type=code&client_id=${clientID}&scope=${scope}&redirect_uri=${redirectUri}&selectComputer=${selectComputer}`;
+	}
 }
 
 async function connectToDV() {
