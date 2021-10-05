@@ -2,11 +2,18 @@ import Cubes from '../src/misc/Cubes'
 import Lights from '../src/misc/Lights'
 
 import * as THREE from 'three';
-window.THREE = THREE
+import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
+import { XRHandModelFactory } from 'three/examples/jsm/webxr/XRHandModelFactory.js'
 
-const DV = window.DV
-const { DVThree } = DV
-const { Computer, ComputerConnection, Keyboard, MouseControls,  TouchControls, KeyboardControls, XRControls } = DVThree;
+const {
+	Computer, 
+	ComputerConnection, 
+	Keyboard, 
+	MouseControls, 
+	TouchControls, 
+	KeyboardControls, 
+	XRControls 
+} = window.DesktopVision.loadSDK(THREE, XRControllerModelFactory, XRHandModelFactory);
 
 let code, token, computers = [], computerId;
 let computerConnection, desktop, mouseControls, touchControls, keyboardControls, xrControls, keyboard;
