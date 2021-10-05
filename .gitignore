@@ -1,4 +1,4 @@
 node_modules
-.apiConfig.json
+.env
 public/build/**
 public/assets/**
