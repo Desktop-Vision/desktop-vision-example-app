@@ -237,11 +237,11 @@ function createComputer() {
 	const video = document.getElementById("video-stream");
 	const sceneContainer = document.getElementById("scene-container");
 
-	desktop = new Computer(video, renderer, computerConnection, camera, false, desktopOptions);
-	keyboard = new Keyboard(computerConnection, camera, keyboardOptions)
-	xrControls = new XRControls(renderer, camera, scene, desktop, [], xrControlsOptions);
-	mouseControls = new MouseControls(camera, desktop, sceneContainer);
-	touchControls = new TouchControls(camera, desktop, sceneContainer);
+	desktop = new Computer(video, renderer, computerConnection, camera, desktopOptions);
+	keyboard = new Keyboard(desktop, keyboardOptions)
+	xrControls = new XRControls(desktop, [], xrControlsOptions);
+	mouseControls = new MouseControls(desktop, sceneContainer);
+	touchControls = new TouchControls(desktop, sceneContainer);
 	keyboardControls = new KeyboardControls(desktop)
 
 	desktop.setPosition({ x: 0, y: 1.6, z: -1 });
