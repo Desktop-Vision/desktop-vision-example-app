@@ -239,7 +239,7 @@ function createComputer() {
 
 	desktop = new Computer(video, renderer, computerConnection, camera, desktopOptions);
 	keyboard = new Keyboard(desktop, keyboardOptions)
-	xrControls = new XRControls(desktop, [], xrControlsOptions);
+	xrControls = new XRControls(scene, desktop, [], xrControlsOptions);
 	mouseControls = new MouseControls(desktop, sceneContainer);
 	touchControls = new TouchControls(desktop, sceneContainer);
 	keyboardControls = new KeyboardControls(desktop)
