@@ -218,6 +218,8 @@ function createComputerConnection(connectionOptions) {
 	computerConnection = new ComputerConnection(connectionOptions);
 	computerConnection.on("stream-added", (newStream) => {
 		const video = document.getElementById("video-stream");
+		video.setAttribute('webkit-playsinline', 'webkit-playsinline');
+		video.setAttribute('playsinline', 'playsinline');
 		video.srcObject = newStream;
 		video.muted = true
 		video.play();
@@ -244,7 +246,7 @@ function createComputer() {
 	touchControls = new TouchControls(desktop, sceneContainer);
 	keyboardControls = new KeyboardControls(desktop)
 
-	desktop.setPosition({ x: 0, y: 1.6, z: -1 });
+	desktop.setPosition({ x: 0, y: 1.6, z: -2 });
 	desktop.keyboard = keyboard
 
 	scene.add(desktop.object3d);
@@ -252,7 +254,9 @@ function createComputer() {
 }
 
 function createTestComputer(){
-	const video = document.getElementById("video-stream");
+	const video = document.getElementById("video-stream")
+	video.setAttribute('webkit-playsinline', 'webkit-playsinline');
+	video.setAttribute('playsinline', 'playsinline');
 	video.src = '/dvVid.mp4';
 	video.muted = true
 	video.play();
