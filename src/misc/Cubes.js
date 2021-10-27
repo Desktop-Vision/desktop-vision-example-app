@@ -9,10 +9,11 @@ export default class Cubes {
         this.boxDepth = 0.5;
 
         this.cubes = [
-            this.createCube(0xffffff, { x: 0, y: 1.6, z: -3 }),
-            this.createCube(0xffffff, { x: -1, y: 1.6, z: -3 }),
-            this.createCube(0xffffff, { x: 1, y: 1.6, z: -3 })
+            this.createCube(0xffff, { x: 0, y: 1.6, z: -3 }),
+            this.createCube(0xffff, { x: -1, y: 1.6, z: -3 }),
+            this.createCube(0xffff, { x: 1, y: 1.6, z: -3 })
         ];
+
     }
 
     createCube(color, coordinates) {
