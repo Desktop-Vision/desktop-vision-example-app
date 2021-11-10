@@ -6,13 +6,8 @@ import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerM
 import { XRHandModelFactory } from 'three/examples/jsm/webxr/XRHandModelFactory.js'
 
 const {
-	Computer, 
-	ComputerConnection, 
-	Keyboard, 
-	MouseControls, 
-	TouchControls, 
-	KeyboardControls, 
-	XRControls 
+	Computer,
+	ComputerConnection,
 } = window.DesktopVision.loadSDK(THREE, XRControllerModelFactory, XRHandModelFactory);
 
 let code, token, computers = [], computerId;
@@ -26,6 +21,7 @@ const fetchComputersButton = document.getElementById("dv-fetch-computers")
 const connectSingleComputerButton = document.getElementById("dv-connect-computer")
 const enterSceneButton = document.getElementById("enter-scene-button")
 const createComputerButton = document.getElementById("computer-test-button")
+const computerRemoveButton = document.getElementById("computer-remove-button")
 
 const clientID = "6wlqRxEgp60JXkcGkLY2"; //must match the api key used on the server
 
@@ -35,27 +31,7 @@ const camera = new THREE.PerspectiveCamera();
 const cubes = new Cubes(scene)
 const lights = new Lights(scene)
 
-const keyboardOptions = {
-	initialPosition: { x: 0, y: -0.25, z: 0 },
-	initialScalar: 0.125,
-	hideMoveIcon: false,
-	hideResizeIcon: false,
-}
-
-const desktopOptions = {
-	renderScreenBack: true,
-	initialScalar: 0.00025,
-	hideMoveIcon: false,
-	hideResizeIcon: false,
-	includeKeyboard: true,
-	grabDistance: 1,
-}
-
-const xrControlsOptions = {
-	hideHands: false,
-	hideControllers: false
-}
-
+const renderAsLayer = false
 
 loadScene()
 checkUrlParams()
@@ -68,19 +44,15 @@ function loadScene() {
 	renderer.xr.enabled = true;
 	renderer.setAnimationLoop(render);
 	sceneContainer.appendChild(renderer.domElement);
-
 	camera.position.set(0, 1.6, 0);
-	cubes.addToScene()
 	lights.addToScene()
+	if (!renderAsLayer) cubes.addToScene()
 }
 
 function render(time) {
-	if (desktop) desktop.update();
-	if (keyboard) keyboard.update();
-	if (mouseControls) mouseControls.update();
-	if (xrControls) xrControls.update();
 
 	if (cubes) cubes.animate(time)
+	if (desktop) desktop.update()
 
 	renderer.render(scene, camera);
 }
@@ -95,6 +67,7 @@ function addWindowResizeEventListener() {
 }
 
 function addButtonEventListeners() {
+	computerRemoveButton.onclick = removeComputer
 	enterSceneButton.onclick = enterVR
 	authCodeButton.onclick = getDvCode
 	authTokenButton.onclick = connectToDV
@@ -221,39 +194,52 @@ function createComputerConnection(connectionOptions) {
 		video.setAttribute('webkit-playsinline', 'webkit-playsinline');
 		video.setAttribute('playsinline', 'playsinline');
 		video.srcObject = newStream;
-		video.muted = true
+		video.muted = false
 		video.play();
 
-		removeComputer()
 		createComputer();
 	});
 }
 
 function removeComputer() {
-	if (desktop) desktop.remove()
-	if (xrControls) xrControls.remove()
-	if (mouseControls) mouseControls.remove()
+	if (desktop) desktop.destroy()
 }
 
 function createComputer() {
+	removeComputer()
 	const video = document.getElementById("video-stream");
 	const sceneContainer = document.getElementById("scene-container");
 
-	desktop = new Computer(video, renderer, computerConnection, camera, desktopOptions);
-	keyboard = new Keyboard(desktop, keyboardOptions)
-	xrControls = new XRControls(scene, desktop, [], xrControlsOptions);
-	mouseControls = new MouseControls(desktop, sceneContainer);
-	touchControls = new TouchControls(desktop, sceneContainer);
-	keyboardControls = new KeyboardControls(desktop)
+	const desktopOptions = {
+		renderScreenBack: true,
+		initialScalar: 0.0005,
+		initialPosition: { x: 0, y: 0, z: 1 },
+		hideMoveIcon: false,
+		hideResizeIcon: false,
+		includeKeyboard: true,
+		grabDistance: 1,
+		renderAsLayer: false,
+		keyboardOptions: {
+			hideMoveIcon: false,
+			hideResizeIcon: false,
+			keyColor: 'rgb(200, 100, 100)',
+			highlightColor: 'rgb(250, 50, 50)'
+		}, 
+		xrOptions: {
+			hideControllers: false,
+			hideHands: false,
+			hideCursors: false
+		}
+	}
 
-	desktop.setPosition({ x: 0, y: 1.6, z: -2 });
-	desktop.keyboard = keyboard
+	desktop = new Computer(scene, sceneContainer, video, renderer, computerConnection, camera, desktopOptions);
+	desktop.position.y = 1.6
+	desktop.position.z = -1
 
-	scene.add(desktop.object3d);
-	scene.add(xrControls.object3d)
+	scene.add(desktop);
 }
 
-function createTestComputer(){
+function createTestComputer() {
 	const video = document.getElementById("video-stream")
 	video.setAttribute('webkit-playsinline', 'webkit-playsinline');
 	video.setAttribute('playsinline', 'playsinline');
@@ -261,6 +247,5 @@ function createTestComputer(){
 	video.muted = true
 	video.play();
 
-	removeComputer()
 	createComputer()
 }
