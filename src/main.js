@@ -212,7 +212,7 @@ function createComputer() {
 
 	const desktopOptions = {
 		renderScreenBack: true,
-		initialScalar: 0.0005,
+		initialScalar: 0.5,
 		initialPosition: { x: 0, y: 0, z: 1 },
 		hideMoveIcon: false,
 		hideResizeIcon: false,
