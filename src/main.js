@@ -4,11 +4,12 @@ import Lights from '../src/misc/Lights'
 import * as THREE from 'three';
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
 import { XRHandModelFactory } from 'three/examples/jsm/webxr/XRHandModelFactory.js'
+import * as DesktopVision from '@desktop.vision/js-sdk/dist/three.min'
 
 const {
 	Computer,
 	ComputerConnection,
-} = window.DesktopVision.loadSDK(THREE, XRControllerModelFactory, XRHandModelFactory);
+} = DesktopVision.loadSDK(THREE, XRControllerModelFactory, XRHandModelFactory);
 
 let code, token, computers = [], computerId;
 let computerConnection, desktop, mouseControls, touchControls, keyboardControls, xrControls, keyboard;
