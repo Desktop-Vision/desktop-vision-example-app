@@ -32,6 +32,6 @@ app.get('/desktop-vision-auth', async (req, res) => {
     console.log('got token for user:', token.uid)
     return res.json({ token })
   } catch (e) {
-    res.send(404)
+    res.sendStatus(404)
   }
 });
