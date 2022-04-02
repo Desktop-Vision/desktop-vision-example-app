@@ -2,7 +2,7 @@ import Cubes from '../src/misc/Cubes'
 import Lights from '../src/misc/Lights'
 
 import * as THREE from 'three';
-import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
+import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js'
 import { XRHandModelFactory } from 'three/examples/jsm/webxr/XRHandModelFactory.js'
 import * as DesktopVision from '@desktop.vision/js-sdk/dist/three.min'
 
@@ -42,11 +42,21 @@ addWindowResizeEventListener()
 
 
 function loadScene() {
-	renderer.xr.enabled = true;
+	renderer.setPixelRatio(window.devicePixelRatio)
+	renderer.setSize(window.innerWidth, window.innerHeight)
+  
+	renderer.shadowMap.enabled = true
+	renderer.xr.enabled = true
+	renderer.outputEncoding = THREE.sRGBEncoding
+	renderer.localClippingEnabled = true
+	renderer.xr.setFramebufferScaleFactor(2.0);
+	renderer.outputEncoding = THREE.sRGBEncoding
+
 	renderer.setAnimationLoop(render);
 	sceneContainer.appendChild(renderer.domElement);
 	camera.position.set(0, 1.6, 0);
 	lights.addToScene()
+	scene.background = new THREE.Color('rgb(50,50,50)')
 	if (!renderAsLayer) cubes.addToScene()
 }
 
@@ -54,6 +64,7 @@ function render(time) {
 
 	if (cubes) cubes.animate(time)
 	if (desktop) desktop.update()
+
 
 	renderer.render(scene, camera);
 }
@@ -213,29 +224,28 @@ function createComputer() {
 
 	const desktopOptions = {
 		renderScreenBack: true,
-		initialScalar: 0.5,
-		initialPosition: { x: 0, y: 0, z: 1 },
+		initialScalar: 1,
+		initialWidth: 2,
 		hideMoveIcon: false,
 		hideResizeIcon: false,
 		includeKeyboard: true,
-		grabDistance: 1,
-		renderAsLayer: false,
+		renderAsLayer,
 		keyboardOptions: {
-			hideMoveIcon: false,
-			hideResizeIcon: false,
-			keyColor: 'rgb(200, 100, 100)',
-			highlightColor: 'rgb(250, 50, 50)'
-		}, 
+		  hideMoveIcon: false,
+		  hideResizeIcon: false,
+		  keyColor: 'rgb(50, 50, 50)',
+		  highlightColor: 'rgb(50, 75, 100)',
+		},
 		xrOptions: {
-			hideControllers: false,
-			hideHands: false,
-			hideCursors: false
-		}
-	}
+		  hideControllers: false,
+		  hideHands: false,
+		  hideCursors: false,
+		},
+	  }
 
 	desktop = new Computer(scene, sceneContainer, video, renderer, computerConnection, camera, desktopOptions);
 	desktop.position.y = 1.6
-	desktop.position.z = -1
+	desktop.position.z = -2
 
 	scene.add(desktop);
 }
@@ -247,6 +257,7 @@ function createTestComputer() {
 	video.src = '/dvVid.mp4';
 	video.muted = true
 	video.play();
+	video.loop = true
 
 	createComputer()
 }
